@@ -1,0 +1,190 @@
+---
+title: "Lab | Exploring the sample_superstore Dataset"
+output: html_notebook
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# Lab \| Exploring the sample_superstore Dataset
+
+In this lab, you will work with the sample_superstore dataset to practice creating, inspecting, and manipulating dataframes.
+
+Follow the steps below to complete the tasks.
+
+## Step 1: Importing the Dataset Load the sample_superstore dataset into a dataframe.
+
+You can find this dataset in the datasets package or download it as a CSV file from online sources.
+Save the dataframe as superstore.
+
+```{r}
+# Importing a CSV file
+df <- read.csv("Sample - Superstore.csv")
+library(dplyr)
+
+
+```
+
+Hint: Use the read.csv() or read_excel() function to import the dataset.
+
+## Step 2: Inspecting the Dataframe Display the first 10 rows of the dataframe using the head() function.
+
+Use the str() function to inspect the structure of the dataframe.
+
+```{r}
+str(df)
+```
+
+-   What are the data types of the columns?
+    -   answ: int, chr, num
+-   Use the summary() function to get a summary of the dataframe. What insights can you gather from the summary?
+
+```{r}
+summary(df)
+```
+
+## Step 3: Accessing Data Extract the Sales column as a vector using the \$ operator.
+
+```{r}
+sales_vector <- df$Sales
+```
+
+Subset the first 15 rows and the columns Order ID, Customer Name, and Sales.
+Use the nrow() and ncol() functions to determine the number of rows and columns in the dataframe.
+
+```{r}
+# Extract the Sales column as a vector
+sales_vector <- df$Sales
+
+# Subset the first 15 rows and specific columns
+subset_data <- df[1:15, c("Order.ID", "Customer.Name", "Sales")]
+
+# Determine the number of rows and columns
+number_of_rows <- nrow(df)
+number_of_columns <- ncol(df)
+
+```
+
+## Step 4:
+
+-   Filtering Data Filter the dataframe to show only rows where the Profit is greater than 100.
+
+    ```{r}
+    profit_over_100 <- df[df$Profit > 100, ]
+    ```
+
+-   Filter the dataframe to show only rows where the Category is "Furniture" and the Sales are greater than 500.
+
+```{r}
+furniture_sales_over_500 <- df[df$Category == "Furniture" & df$Sales > 500, ]
+```
+
+-   Filter the dataframe to show only rows where the Region is "West" and the Quantity is greater than 5.
+
+```{r}
+
+west_quantity_over_5 <- df[df$Region == "West" & df$Quantity > 5,]
+```
+
+## Step 5:
+
+-   Adding and Modifying Columns Add a new column called Profit Margin that calculates the profit margin as (Profit / Sales) \* 100.
+
+```{r}
+
+# Use transform() to add a new column and modify an existing one
+df <- transform(df,
+                Profit_Margin = (Profit / Sales) * 100  # Add Profit Margin column
+                #round(Sales, 2)                  # Modify Sales column
+)
+
+
+
+```
+
+-   Modify the Sales column by rounding the values to 2 decimal places.
+
+```{r}
+df <- transform(df, Sales = round(Sales, 2)                  # Modify Sales column
+)
+
+```
+
+-   Remove the Postal Code column from the dataframe using the subset() or select() function.
+
+```{r}
+# Remove the Postal Code column using select()
+df <- select(df, -Postal.Code)
+```
+
+## Step 6:
+
+-   Handling Missing Data Check for missing values in the dataframe using the is.na() function.
+
+```{r}
+# Check for missing values
+sum(is.na(df))
+
+# See if there are any missing values in the data frame
+any_missing <- any(missing_values)
+print(any_missing)
+```
+
+-   Are there any missing values?
+
+    -   no
+
+-   If there are missing values, remove rows with missing data using the na.omit() function.
+
+```{r}
+na.omit(df)
+```
+
+-   Replace any missing values in the Sales column with the mean of the Sales column using the na.fill() function.
+
+```{r}
+# Calculate the mean of 'Sales', excluding NA values
+sales_mean <- mean(df$Sales, na.rm = TRUE)
+
+# Replace NA values in the 'Sales' column with the mean
+df$Sales[is.na(df$Sales)] <- sales_mean
+```
+
+## Step 7: Advanced Analysis (Optional)
+
+-   Group the dataframe by Region and calculate the total Sales and Profit for each region.
+```{r}
+# Load dplyr for data manipulation
+library(dplyr)
+
+# Group by Region and calculate total Sales and Profit
+region_summary <- df %>%
+  group_by(Region) %>%
+  summarize(Total_Sales = sum(Sales, na.rm = TRUE),
+            Total_Profit = sum(Profit, na.rm = TRUE))
+
+```
+
+-   Create a new column called Discount Level that categorizes the Discount column into: - "Low" (0-0.2)
+- "Medium" (0.2-0.5)
+- "High" (0.5-1)
+
+```{r}
+# Categorize the Discount column
+df$Discount_Level <- cut(df$Discount,
+  breaks = c(-Inf, 0.2, 0.5, 1),
+  labels = c("Low", "Medium", "High"),
+  right = FALSE)
+
+```
+
+
+
+- Sort the dataframe by Sales in descending order.
+
+```{r}
+# Sort the dataframe by Sales in descending order
+df <- df %>%
+  arrange(desc(Sales))
+```
+
